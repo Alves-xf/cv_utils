@@ -11,19 +11,14 @@
 '''
 import numpy as np
 
-
-def imadjust(img, out_range=[0, 255], gamma=1, percentile = False):
+def imadjust(img, in_range=[0, 1], out_range=[0, 1], gamma=1):
     # 默认参数和matlab中的默认参数相同
 
-    img_out = img
-
-    # 百分比截断
-    if percentile:
-        p1, p99 = np.percentile(img, (1, 99))
-        img_out = np.clip(img, p1, p99)
-
-    low_in, high_in = np.min(img), np.max(img)
+    low_in, high_in = in_range[0], in_range[1]
     low_out, high_out = out_range[0], out_range[1]
+    # 百分比截断
+    p1, p99 = np.percentile(img, (1, 99))
+    img_out = np.clip(img, p1, p99)
 
     # 映射 参考https://stackoverflow.com/questions/39767612/what-is-the-equivalent-of-matlabs-imadjust-in-python
     img_out = (((img_out - low_in) / (high_in - low_in)) ** gamma) * (high_out - low_out) + low_out
